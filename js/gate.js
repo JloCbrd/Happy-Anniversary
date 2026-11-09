@@ -85,11 +85,35 @@ function spawnFloater(preRoll = 0) {
 for (let i = 0; i < 14; i++) spawnFloater(Math.random() * 7);   // fill the screen at load
 const floaters = setInterval(() => { if (gate.classList.contains('on')) spawnFloater(); }, 600);
 
-/* ---- Optional background music (set CONFIG.music to an mp3 path) ---- */
+/* ---- Background music: starts when she taps "One more thing", plays until the end ---- */
 const audio = new Audio();
-if (CONFIG.music) {
+const musicBtn = $('music');
+let musicFade = null;
+
+function setMusicLabel() {
+  musicBtn.textContent = audio.paused ? '♪ Music off' : '♪ Music';
+}
+
+// Called from a tap (needed so the browser allows sound). Fades in softly.
+function startMusic() {
+  if (!CONFIG.music || audio.src) return;
   audio.src = CONFIG.music;
   audio.loop = true;
-  $('music').style.display = 'block';
-  $('music').onclick = () => (audio.paused ? audio.play().catch(() => {}) : audio.pause());
+  audio.volume = 0;
+  audio.addEventListener('error', () => { musicBtn.style.display = 'none'; });   // no file? stay silent, no broken button
+  audio.play().then(() => {
+    musicBtn.style.display = 'block';
+    setMusicLabel();
+    clearInterval(musicFade);
+    musicFade = setInterval(() => {
+      audio.volume = Math.min(.8, audio.volume + .05);
+      if (audio.volume >= .8) clearInterval(musicFade);
+    }, 150);
+  }).catch(() => {});
 }
+
+musicBtn.onclick = () => {
+  if (audio.paused) { audio.volume = .8; audio.play().catch(() => {}); }
+  else audio.pause();
+  setMusicLabel();
+};

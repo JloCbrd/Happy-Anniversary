@@ -13,8 +13,15 @@ function buildJar() {
     const eng = Engine.create(), cv = $('jarc'), c = cv.getContext('2d');
     const W = 300, H = 380, L = 50, R = 250, B = 360, N = CONFIG.reasons.length, need = Math.min(8, N);
     $('cnt').textContent = '0 / ' + N;
-    const wall = x => Bodies.rectangle(x, 0, 10, 800, { isStatic: true });
-    Composite.add(eng.world, [wall(L - 5), wall(R + 5), Bodies.rectangle(150, B + 5, 220, 10, { isStatic: true })]);
+    // Thick walls/floor so fast envelopes can't tunnel through them.
+    const wall = x => Bodies.rectangle(x, 0, 30, 800, { isStatic: true });
+    Composite.add(eng.world, [wall(L - 15), wall(R + 15), Bodies.rectangle(150, B + 15, 260, 30, { isStatic: true })]);
+    // Lid: added only after every envelope has dropped in, so nothing can fly out of the jar.
+    let ready = false;
+    setTimeout(() => {
+        Composite.add(eng.world, Bodies.rectangle(150, 54, 260, 20, { isStatic: true }));
+        ready = true;
+    }, N * 300 + 1600);
     const hs = [];
     let read = 0;
     CONFIG.reasons.forEach((r, i) => setTimeout(() => {
@@ -36,7 +43,62 @@ function buildJar() {
         c.bezierCurveTo(x + s * .7, y - s * 1.1, x + s * 1.4, y - s * .2, x, y + s * .9);
         c.fill();
     };
-    $('shake').onclick = () => hs.forEach(b => Body.setVelocity(b, { x: (Math.random() - .5) * 14, y: -10 - Math.random() * 8 }));
+    // Safety net: if an envelope ever ends up outside the jar, put it back inside.
+    const rescue = () => hs.forEach(b => {
+        const p = b.position;
+        if (p.x < L || p.x > R || p.y > B || (ready && p.y < 62) || !isFinite(p.x + p.y)) {
+            Body.setPosition(b, { x: L + 30 + Math.random() * (R - L - 60), y: 150 + Math.random() * 100 });
+            Body.setVelocity(b, { x: 0, y: 0 });
+        }
+    });
+    setInterval(rescue, 250);
+
+    // Shake: the jar wobbles, envelopes tumble around inside, and the jar "picks" one for her.
+    let lastShake = 0;
+    const doShake = () => {
+        const now = Date.now();
+        if (!ready || !hs.length || now - lastShake < 900)
+            return;
+        lastShake = now;
+        const jw = $('jarwrap');
+        jw.classList.remove('wobble');
+        void jw.offsetWidth;
+        jw.classList.add('wobble');
+        hs.forEach(b => {
+            Body.setVelocity(b, { x: (Math.random() - .5) * 8, y: -5 - Math.random() * 4 });
+            Body.setAngularVelocity(b, (Math.random() - .5) * .4);
+        });
+        const pick = hs[Math.floor(Math.random() * hs.length)];
+        Body.setVelocity(pick, { x: 0, y: -11 });
+        pick.glow = performance.now() + 3500;
+    };
+    $('shake').onclick = () => {
+        doShake();
+        enableMotionShake();
+    };
+
+    // Bonus: really shaking the phone works too (iPhone asks permission on the first button tap).
+    let motionOn = false;
+    function enableMotionShake() {
+        if (motionOn || typeof DeviceMotionEvent === 'undefined')
+            return;
+        const attach = () => {
+            motionOn = true;
+            addEventListener('devicemotion', e => {
+                const a = e.accelerationIncludingGravity;
+                if (!a || !$('jar').classList.contains('on'))
+                    return;
+                if (Math.hypot(a.x || 0, a.y || 0, a.z || 0) > 25)
+                    doShake();
+            });
+        };
+        try {
+            if (typeof DeviceMotionEvent.requestPermission === 'function')
+                DeviceMotionEvent.requestPermission().then(r => { if (r === 'granted') attach(); }).catch(() => {});
+            else
+                attach();
+        } catch (err) { }
+    }
     cv.addEventListener('pointerdown', e => {
         const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
         let best = null, bd = 28;
@@ -98,6 +160,10 @@ function buildJar() {
             c.save();
             c.translate(b.position.x, b.position.y);
             c.rotate(b.angle);
+            if (b.glow && b.glow > performance.now()) {
+                c.shadowColor = '#ffe08a';
+                c.shadowBlur = 14 + 8 * Math.sin(performance.now() / 120);
+            }
             c.fillStyle = '#ff8fb1';
             c.fillRect(-18, -13, 36, 26);
             c.fillStyle = '#ff6f9c';

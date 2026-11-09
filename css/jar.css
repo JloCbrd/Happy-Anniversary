@@ -183,3 +183,17 @@
 #ovt {
   font: 500 1.8rem/1.35 Caveat, cursive;
 }
+
+/* Shake the jar */
+#jarwrap.wobble {
+  animation: jarShake .6s cubic-bezier(.36, .07, .19, .97);
+}
+
+@keyframes jarShake {
+  0%, 100% { transform: none; }
+  15% { transform: translateX(-8px) rotate(-3deg); }
+  30% { transform: translateX(8px) rotate(3deg); }
+  45% { transform: translateX(-6px) rotate(-2deg); }
+  60% { transform: translateX(6px) rotate(2deg); }
+  80% { transform: translateX(-2px) rotate(-1deg); }
+}

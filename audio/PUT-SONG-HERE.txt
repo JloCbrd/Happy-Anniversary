@@ -1,0 +1,1 @@
+Ilagay dito yung theme song mo at pangalanan na 'song.mp3' (audio/song.mp3). Kung iba ang filename, palitan yung 'music' sa js/config.js.

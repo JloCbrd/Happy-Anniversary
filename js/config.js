@@ -9,7 +9,7 @@ const CONFIG = {
     firstMeet: "2025-11-10", // password: the day she said yes (YYYY-MM-DD)
     storyTitle: "Our story so far",
     storySub: "A few moments I keep in my heart.",
-    music: "", // optional: URL of an .mp3 (leave "" to hide button)
+    music: "audio/song.mp3", // optional: URL of an .mp3 (leave "" to hide button)
     milestones: [
         {
             date: "The day we met", title: "Where it all began", text: "I was excited to see you, but I was nervous too. Then I saw you, and everything felt like it slowed down. You were so pretty, especially when you smiled. And your voice was so cute. I remember thinking, “Wow. I’m in trouble.”", photo: "img/thedaywemeet.jpg"
@@ -62,7 +62,7 @@ const CONFIG = {
     "I wouldn't trade what we have for anything.",
     "Because out of everyone in this world, you're the one I want."
 ],
-    finalQ: "Will you stay with me for another year?",
+    finalQ: "Will you stay with me forever?",
     finalSub: "Happy anniversary. I love you more every day.",
     finalDone: "Best answer ever. I love you!"
 };
