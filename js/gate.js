@@ -85,10 +85,15 @@ function spawnFloater(preRoll = 0) {
 for (let i = 0; i < 14; i++) spawnFloater(Math.random() * 7);   // fill the screen at load
 const floaters = setInterval(() => { if (gate.classList.contains('on')) spawnFloater(); }, 600);
 
-/* ---- Background music: starts when she taps "One more thing", plays until the end ---- */
+/* ---- Background music: starts when she taps "Continue" after "Come find me", loops until the very end ---- */
 const audio = new Audio();
 const musicBtn = $('music');
-let musicFade = null;
+let musicFade = null, musicStarted = false;
+
+audio.preload = 'auto';
+audio.loop = true;
+audio.addEventListener('error', () => { musicBtn.style.display = 'none'; });   // no file? stay silent, no broken button
+if (CONFIG.music) audio.src = CONFIG.music;   // starts buffering right away, so the song is ready by the time she gets to Continue
 
 function setMusicLabel() {
   musicBtn.textContent = audio.paused ? '♪ Music off' : '♪ Music';
@@ -96,11 +101,9 @@ function setMusicLabel() {
 
 // Called from a tap (needed so the browser allows sound). Fades in softly.
 function startMusic() {
-  if (!CONFIG.music || audio.src) return;
-  audio.src = CONFIG.music;
-  audio.loop = true;
+  if (!CONFIG.music || musicStarted) return;
+  musicStarted = true;
   audio.volume = 0;
-  audio.addEventListener('error', () => { musicBtn.style.display = 'none'; });   // no file? stay silent, no broken button
   audio.play().then(() => {
     musicBtn.style.display = 'block';
     setMusicLabel();
@@ -109,10 +112,15 @@ function startMusic() {
       audio.volume = Math.min(.8, audio.volume + .05);
       if (audio.volume >= .8) clearInterval(musicFade);
     }, 150);
-  }).catch(() => {});
+  }).catch(() => {
+    // Browser refused: show the button so she can tap it herself.
+    musicBtn.style.display = 'block';
+    setMusicLabel();
+  });
 }
 
 musicBtn.onclick = () => {
+  clearInterval(musicFade);
   if (audio.paused) { audio.volume = .8; audio.play().catch(() => {}); }
   else audio.pause();
   setMusicLabel();

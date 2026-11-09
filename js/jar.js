@@ -12,6 +12,9 @@ function buildJar() {
     const { Engine, Runner, Bodies, Composite, Body } = Matter;
     const eng = Engine.create(), cv = $('jarc'), c = cv.getContext('2d');
     const W = 300, H = 380, L = 50, R = 250, B = 360, N = CONFIG.reasons.length, need = Math.min(8, N);
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);   // sharp on phone screens
+    cv.width = W * dpr;
+    cv.height = H * dpr;
     $('cnt').textContent = '0 / ' + N;
     // Thick walls/floor so fast envelopes can't tunnel through them.
     const wall = x => Bodies.rectangle(x, 0, 30, 800, { isStatic: true });
@@ -33,6 +36,26 @@ function buildJar() {
         hs.push(b);
         Composite.add(eng.world, b);
     }, i * 300));
+    // Shake show: sparkles, excited fireflies, golden glass glow, a hopping lid.
+    let excite = 0, shine = 0, lidT = -1e4, shakes = 0;
+    const sparks = [];
+    const SPARK_COLORS = ['#ffe08a', '#fff3c4', '#ff8fb1', '#ffffff'];
+    const sparkBurst = (x, y, n, spread = 2.4) => {
+        for (let i = 0; i < n; i++) {
+            const a = -Math.PI / 2 + (Math.random() - .5) * spread, v = 1.5 + Math.random() * 4.5;
+            sparks.push({
+                x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+                life: 45 + Math.random() * 45, max: 90, s: 1.5 + Math.random() * 2.5,
+                col: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)]
+            });
+        }
+    };
+    const HINTS = [
+        'Something is glowing in there… tap it \u2728',
+        'The jar picked one just for you \u2661',
+        'Hehe, shake all you want. I have plenty more.',
+        'This one has your name on it…'
+    ];
     const ff = Array.from({ length: 16 }, () => ({
         x: L + Math.random() * 200, y: 60 + Math.random() * 290, p: Math.random() * 6, s: .2 + Math.random() * .4
     }));
@@ -70,7 +93,21 @@ function buildJar() {
         });
         const pick = hs[Math.floor(Math.random() * hs.length)];
         Body.setVelocity(pick, { x: 0, y: -11 });
-        pick.glow = performance.now() + 3500;
+        pick.glow = performance.now() + 5000;
+        // the show
+        excite = 1;
+        shine = 1;
+        lidT = performance.now();
+        sparkBurst(150, 46, 34);
+        const r = cv.getBoundingClientRect();
+        burst(r.left + r.width / 2, r.top + r.height * .12, 22);
+        if (navigator.vibrate)
+            navigator.vibrate([40, 30, 70]);
+        const note = $('note');
+        note.textContent = HINTS[shakes++ % HINTS.length];
+        note.classList.remove('pop');
+        void note.offsetWidth;
+        note.classList.add('pop');
     };
     $('shake').onclick = () => {
         doShake();
@@ -130,6 +167,8 @@ function buildJar() {
     });
     $('ovc').onclick = () => {
         $('ov').className = '';
+        if (read < N)
+            $('note').textContent = '';
         if (read === N) {
             $('cnt').textContent = 'All ' + N + ' found';
             $('note').textContent = 'The jar is empty now, but my reasons never run out.';
@@ -142,19 +181,27 @@ function buildJar() {
         c.roundRect(L - 10, 44, R - L + 20, B - 34, [10, 10, 38, 38]);
     };
     (function draw() {
+        c.setTransform(dpr, 0, 0, dpr, 0, 0);
         c.clearRect(0, 0, W, H);
+        excite = Math.max(0, excite - .008);
+        shine = Math.max(0, shine - .01);
         body();
         c.fillStyle = 'rgba(190,210,255,.10)';
         c.fill();
+        if (shine > 0) {
+            c.fillStyle = 'rgba(255,224,138,' + (.2 * shine) + ')';
+            c.fill();
+        }
         ff.forEach(f => {
-            f.p += .02;
-            f.x = Math.min(R - 8, Math.max(L + 8, f.x + Math.sin(f.p) * f.s));
-            f.y = Math.min(B - 8, Math.max(60, f.y + Math.cos(f.p * .7) * f.s));
-            const a = .4 + .6 * Math.abs(Math.sin(f.p * 2)), gr = c.createRadialGradient(f.x, f.y, 0, f.x, f.y, 9);
+            const sp = f.s * (1 + excite * 10), rad = 9 + excite * 6;
+            f.p += .02 + excite * .08;
+            f.x = Math.min(R - 8, Math.max(L + 8, f.x + Math.sin(f.p) * sp));
+            f.y = Math.min(B - 8, Math.max(60, f.y + Math.cos(f.p * .7) * sp));
+            const a = Math.min(1, .4 + .6 * Math.abs(Math.sin(f.p * 2)) + excite * .5), gr = c.createRadialGradient(f.x, f.y, 0, f.x, f.y, rad);
             gr.addColorStop(0, 'rgba(255,230,140,' + a + ')');
             gr.addColorStop(1, 'rgba(255,230,140,0)');
             c.fillStyle = gr;
-            c.fillRect(f.x - 9, f.y - 9, 18, 18);
+            c.fillRect(f.x - rad, f.y - rad, rad * 2, rad * 2);
         });
         hs.forEach(b => {
             c.save();
@@ -181,14 +228,34 @@ function buildJar() {
       c.fill();
       c.fillStyle = 'rgba(255,255,255,.35)';
       c.fillRect(-2, -1, 2, 2);
+            if (b.glow && b.glow > performance.now()) {
+                const t = performance.now() / 260;
+                c.fillStyle = '#fff3c4';
+                for (let k = 0; k < 3; k++) {
+                    c.beginPath();
+                    c.arc(Math.cos(t + k * 2.09) * 28, Math.sin(t + k * 2.09) * 21, 2.4, 0, 6.28);
+                    c.fill();
+                }
+                if (Math.random() < .35)
+                    sparks.push({ x: b.position.x, y: b.position.y, vx: (Math.random() - .5) * .8, vy: -.3 - Math.random() * .6, life: 40, max: 90, s: 1.6, col: '#ffe08a' });
+            }
             c.restore();
         });
         body();
-        c.strokeStyle = 'rgba(225,235,255,.85)';
+        c.strokeStyle = shine > 0 ? 'rgba(255,240,190,.95)' : 'rgba(225,235,255,.85)';
         c.lineWidth = 4;
+        c.shadowColor = 'rgba(255,224,138,' + shine + ')';
+        c.shadowBlur = 26 * shine;
         c.stroke();
+        c.shadowBlur = 0;
         c.fillStyle = 'rgba(255,255,255,.12)';
         c.fillRect(L + 2, 70, 8, 200);
+        // Lid + bow: hops and rattles when shaken
+        const lt = performance.now() - lidT, k = lt < 800 ? 1 - lt / 800 : 0;
+        c.save();
+        c.translate(150, 40);
+        c.rotate(Math.sin(lt / 70) * k * .12);
+        c.translate(-150, -40 - Math.abs(Math.sin(lt / 110)) * k * 22);
         c.fillStyle = '#f2b95e';
         c.beginPath();
         c.roundRect(L - 18, 32, R - L + 36, 16, 8);
@@ -203,6 +270,27 @@ function buildJar() {
         c.beginPath();
         c.arc(150, 29, 5, 0, 6.28);
         c.fill();
+        c.restore();
+        // Sparkles
+        for (let n = sparks.length - 1; n >= 0; n--) {
+            const p = sparks[n];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += .06;
+            if (--p.life <= 0) {
+                sparks.splice(n, 1);
+                continue;
+            }
+            c.globalAlpha = Math.min(1, p.life / 30);
+            c.fillStyle = p.col;
+            c.shadowColor = p.col;
+            c.shadowBlur = 8;
+            c.beginPath();
+            c.arc(p.x, p.y, p.s, 0, 6.28);
+            c.fill();
+        }
+        c.globalAlpha = 1;
+        c.shadowBlur = 0;
         requestAnimationFrame(draw);
     })();
 }

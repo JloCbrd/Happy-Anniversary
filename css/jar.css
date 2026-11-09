@@ -190,10 +190,10 @@
 }
 
 @keyframes jarShake {
-  0%, 100% { transform: none; }
-  15% { transform: translateX(-8px) rotate(-3deg); }
+  0%, 100% { transform: none; filter: none; }
+  15% { transform: translateX(-8px) rotate(-3deg); filter: drop-shadow(0 0 16px rgba(242, 185, 94, .75)); }
   30% { transform: translateX(8px) rotate(3deg); }
-  45% { transform: translateX(-6px) rotate(-2deg); }
+  45% { transform: translateX(-6px) rotate(-2deg); filter: drop-shadow(0 0 22px rgba(255, 143, 177, .7)); }
   60% { transform: translateX(6px) rotate(2deg); }
-  80% { transform: translateX(-2px) rotate(-1deg); }
+  80% { transform: translateX(-2px) rotate(-1deg); filter: drop-shadow(0 0 10px rgba(242, 185, 94, .4)); }
 }

@@ -1,0 +1,91 @@
+/* ============================================================
+   Responsive layer: loaded last, so it fine-tunes every page for
+   small phones, landscape phones, tablets and laptops.
+   ============================================================ */
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+* { -webkit-tap-highlight-color: transparent; }
+
+button { touch-action: manipulation; }
+
+img { max-width: 100%; }
+
+/* Real viewport height on phones (address bar safe), side notches respected */
+section {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+
+/* Game canvas never grows taller than the screen can hold */
+#game canvas { width: min(100%, 640px, calc((100dvh - 300px) * 1.7778)); min-width: 240px; }
+
+#note { max-width: min(32ch, 100%); }
+
+/* Opened letter always fits the screen */
+#lt2 { width: min(320px, 100%); max-height: 90dvh; overflow-y: auto; }
+
+/* Bigger touch targets for fingers */
+@media (pointer: coarse) {
+  .ph .nav { width: 42px; height: 42px; }
+}
+
+/* ---- Phones ---- */
+@media (max-width: 480px) {
+  section { padding-top: 36px; padding-bottom: 36px; }
+  .letter-wrap { max-width: 100%; }
+  .letter { padding: 42px 24px 30px; font-size: 1.45rem; gap: 12px; }
+  .letter h1 { font-size: clamp(2.1rem, 10.5vw, 3rem); white-space: normal; text-wrap: balance; }
+  .msg p:first-child { font-size: 1.6rem; }
+  .letter .date input { font-size: 1.8rem; }
+  .seal { width: 80px; height: 80px; }
+  #story header { padding: 24px 0; }
+  .ms { margin-bottom: 56px; }
+  .ms.l { margin-right: 6%; }
+  .ms.r { margin-left: 6%; }
+  #music { right: 10px; padding: .45em .8em; font-size: .85rem; }
+  #ovt { font-size: 1.6rem; }
+  #arena { max-width: 100%; }
+}
+
+/* ---- Very small phones (iPhone SE, small Androids) ---- */
+@media (max-width: 360px) {
+  body { font-size: 16px; }
+  section { padding-left: 14px; padding-right: 14px; }
+  .letter { padding: 38px 18px 26px; }
+  .pad button { width: 60px; height: 60px; }
+  #lt2 { padding: 22px 16px; }
+}
+
+/* ---- Phones held sideways: short screens ---- */
+@media (max-height: 520px) and (orientation: landscape) {
+  section { padding-top: 16px; padding-bottom: 16px; }
+  #game .sub { display: none; }
+  #game h2 { font-size: 1.4rem; margin-bottom: .2em; }
+  #game canvas { width: min(100%, 640px, calc((100dvh - 150px) * 1.7778)); }
+  .pad { margin-top: 8px; }
+  .pad button { width: 54px; height: 54px; }
+  #nextGame { margin-top: 8px; }
+  .letter { padding: 36px 28px 22px; gap: 8px; }
+  .seal { width: 64px; height: 64px; }
+  #ovt { font-size: 1.35rem; margin-bottom: 12px; }
+  #lt2 { padding: 18px 20px; }
+  #final h1, #fDone { font-size: clamp(2.2rem, 9vw, 3.4rem); }
+  #arena { height: 100px; margin-top: 8px; }
+}
+
+/* ---- Tablets and up ---- */
+@media (min-width: 700px) {
+  body { font-size: 18px; }
+  #story { max-width: 620px; }
+  .letter-wrap { max-width: 500px; }
+  #jarwrap { width: 340px; }
+}
+
+/* ---- Laptops and desktops: same phone-first layout, just roomier ---- */
+@media (min-width: 1100px) {
+  #game canvas { max-width: 720px; }
+  #story { max-width: 680px; }
+}

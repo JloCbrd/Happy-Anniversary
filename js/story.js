@@ -66,4 +66,4 @@ function buildStory() {
   document.querySelectorAll('.ms').forEach(el => io.observe(el));
 }
 
-$('toJar').onclick = () => { show('jar'); buildJar(); startMusic(); };
+$('toJar').onclick = () => { show('jar'); buildJar(); };

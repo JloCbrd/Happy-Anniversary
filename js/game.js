@@ -180,4 +180,4 @@ addEventListener('keyup', e => {
   if (e.key === 'ArrowRight') K.r = 0;
 });
 
-$('nextGame').onclick = () => { show('story'); buildStory(); };
+$('nextGame').onclick = () => { startMusic(); show('story'); buildStory(); };   // music begins here and plays to the end
