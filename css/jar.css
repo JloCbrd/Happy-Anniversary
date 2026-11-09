@@ -1,0 +1,185 @@
+/* ============================================================
+   Page 4: jar of envelopes + the opened letter overlay
+   ============================================================ */
+
+#jarwrap {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+}
+
+#jarc {
+  width: 100%;
+  touch-action: manipulation;
+  display: block;
+}
+
+#note {
+  min-height: 5.5em;
+  max-width: 32ch;
+  font-family: Fraunces,serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin: 14px auto;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px dashed transparent;
+}
+
+#note:not(:empty) {
+  border-color: var(--gold);
+  background: rgba(242,185,94,.08);
+}
+
+#note.pop {
+  animation: pop .35s;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(.85) rotate(-2deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+#toFinal {
+  display: none;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232,69,111,.6);
+  }
+
+  100% {
+    box-shadow: 0 0 0 14px rgba(232,69,111,0);
+  }
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#ov {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  background: rgba(10,6,25,.82);
+  padding: 20px;
+}
+
+#ov.on {
+  display: grid;
+}
+
+#ov>* {
+  grid-area: 1/1;
+}
+
+.lt {
+  position: relative;
+  width: min(300px,86vw);
+  height: 200px;
+  background: #ff8fb1;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(232,69,111,.5);
+  transition: opacity .4s,transform .4s;
+  animation: fly .7s cubic-bezier(.2,.9,.3,1) backwards;
+}
+
+@keyframes fly {
+  from {
+    transform: translate(var(--dx),var(--dy)) scale(.12) rotate(-20deg);
+    opacity: .6;
+  }
+}
+
+.lt .flap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 105px;
+  background: #ff6f9c;
+  clip-path: polygon(0 0,100% 0,50% 100%);
+  transform-origin: top;
+  transition: transform .5s;
+}
+
+.lt::after {
+  content: "\1F497";
+  position: absolute;
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  transition: opacity .3s;
+}
+
+#ov.open .flap {
+  transform: rotateX(180deg);
+}
+
+#ov.open .lt::after {
+  opacity: 0;
+}
+
+#ov.show .lt {
+  opacity: 0;
+  transform: translateY(40px) scale(.8);
+  pointer-events: none;
+}
+
+#lt2 {
+  display: none;
+  position: relative;
+  z-index: 2;
+  max-width: 320px;
+  background: #fff7ee;
+  color: #3a2a4a;
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(232,69,111,.45);
+}
+
+#ov.show #lt2 {
+  display: block;
+  animation: pop .4s;
+}
+
+#ovt {
+  font: italic 1.3rem/1.5 Fraunces,Georgia,serif;
+  margin: 0 0 18px;
+}
+
+/* Letter polish: wax seal on the envelope, handwriting on lined paper */
+.lt::after {
+  content: "";
+  width: 38px;
+  height: 38px;
+  top: 86px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e0425e, #8f1630 70%);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .35);
+}
+
+#lt2 {
+  background-image: repeating-linear-gradient(transparent 0 33px, rgba(232, 69, 111, .16) 33px 34px);
+}
+
+#ovt {
+  font: 500 1.8rem/1.35 Caveat, cursive;
+}

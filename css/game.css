@@ -1,0 +1,45 @@
+/* ============================================================
+   Page 2: pixel game
+   ============================================================ */
+
+#game canvas {
+  width: 100%;
+  max-width: 640px;
+  image-rendering: pixelated;
+  border-radius: 12px;
+  border: 3px solid var(--bg2);
+  background: #2b2250;
+  touch-action: none;
+}
+
+.pix {
+  font-family: 'Press Start 2P',monospace;
+  font-size: .65rem;
+  line-height: 1.8;
+  color: var(--gold);
+  margin: 10px 0;
+}
+
+.pad {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.pad button {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  padding: 0;
+  background: var(--bg2);
+  border: 2px solid var(--dim);
+}
+
+#nextGame {
+  display: none;
+  margin-top: 16px;
+}

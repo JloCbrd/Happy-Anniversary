@@ -1,0 +1,44 @@
+/* ============================================================
+   Page 5: final question + heart/confetti canvas
+   ============================================================ */
+
+#arena {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  height: 150px;
+  margin-top: 20px;
+}
+
+#arena button {
+  position: absolute;
+}
+
+#yes {
+  left: calc(50% - 110px);
+  top: 30px;
+  font-size: 1.2rem;
+}
+
+#no {
+  left: calc(50% + 10px);
+  top: 30px;
+}
+
+#fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+#final h1,
+#fDone {
+  font-family: Caveat, cursive;
+  font-weight: 700;
+  font-size: clamp(3rem, 14vw, 5rem);
+  line-height: 1;
+  color: var(--rose);
+}
+
+#fDone { color: var(--gold); }

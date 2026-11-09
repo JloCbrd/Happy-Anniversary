@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For You</title>
+<meta name="theme-color" content="#120d1c">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;700&family=Caveat:wght@500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/gate.css">
+<link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="css/story.css">
+<link rel="stylesheet" href="css/jar.css">
+<link rel="stylesheet" href="css/final.css">
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="ov"><div class="lt"><div class="flap"></div></div><div id="lt2"><p id="ovt"></p><button id="ovc">Keep it in my heart</button></div></div>
+<button id="music" class="ghost" aria-label="Toggle music">♪ Music</button>
+
+<section id="gate" class="on">
+  <div class="letter-wrap">
+    <div class="letter">
+      <h1><span class="write">Hello, Prettyyy!</span></h1>
+      <div class="msg">
+        <p class="write">I made something special just for you, my love. ♡</p>
+        <p class="write">But first, I have a little challenge for you.</p>
+        <p class="write">Guess the password to unlock your anniversary surprise!</p>
+      </div>
+      <div class="date" role="group" aria-label="The day you said yes">
+        <input id="pm" inputmode="numeric" maxlength="2" placeholder="MM" aria-label="Month">
+        <span>/</span>
+        <input id="pd" inputmode="numeric" maxlength="2" placeholder="DD" aria-label="Day">
+        <span>/</span>
+        <input id="py" inputmode="numeric" maxlength="4" placeholder="YYYY" aria-label="Year">
+      </div>
+      <p class="hint">hint: the day you said yes</p>
+      <div id="err"></div>
+      <button id="open" class="seal" aria-label="Break the seal">Open</button>
+    </div>
+  </div>
+</section>
+
+<section id="game">
+  <h2>Come find me</h2>
+  <p class="sub">Collect the hearts and run to me. Jump to catch the high ones. 10 hearts for our 10th.</p>
+  <canvas id="gc" width="320" height="180"></canvas>
+  <div class="pix" id="score">Hearts 0/10</div>
+  <div class="pad">
+    <button id="bl" aria-label="Left">◀</button>
+    <button id="bj" aria-label="Jump">▲</button>
+    <button id="br" aria-label="Right">▶</button>
+  </div>
+  <button id="nextGame">Continue</button>
+</section>
+
+<section id="story">
+  <header><h1 id="sT"></h1><p class="sub" id="sS"></p></header>
+  <div id="msList"></div>
+  <button id="toJar">One more thing</button>
+</section>
+
+<section id="jar">
+  <h2>Reasons I love you</h2>
+  <p class="sub">Tap an envelope to open it. Each one leaves the jar after you read it.</p>
+  <div class="pix" id="cnt">0 / 12</div>
+  <div id="jarwrap"><canvas id="jarc" width="300" height="380"></canvas></div>
+  <div id="note"></div>
+  <div class="row"><button id="shake">Shake the jar</button><button id="toFinal" class="ghost">I have a question</button></div>
+</section>
+
+<section id="final">
+  <h1 id="fQ"></h1>
+  <p class="sub" id="fS"></p>
+  <div id="arena"><button id="yes">Yes</button><button id="no" class="ghost">No</button></div>
+  <h2 id="fDone" style="display:none"></h2>
+</section>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/gate.js"></script>
+<script src="js/game.js"></script>
+<script src="js/story.js"></script>
+<script src="js/jar.js"></script>
+<script src="js/final.js"></script>
+</body>
+</html>
