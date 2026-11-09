@@ -89,3 +89,60 @@
   display: none;
   padding: .5em .9em;
 }
+
+/* Multi-photo polaroid: swipe, tap arrows, or follow the dots */
+.ph.multi { display: block; position: relative; }
+
+.ph .track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ph .track::-webkit-scrollbar { display: none; }
+
+.ph .track img { flex: 0 0 100%; scroll-snap-align: center; }
+
+.ph .nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  padding: 0 0 4px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(26, 20, 38, .55);
+  color: #fff;
+  font: 1.7rem/1 sans-serif;
+  cursor: pointer;
+}
+
+.ph .prev { left: 8px; }
+.ph .next { right: 8px; }
+
+.ph .dots {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.ph .dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, .5);
+  transition: background .2s, transform .2s;
+}
+
+.ph .dots span.on { background: var(--gold); transform: scale(1.3); }
